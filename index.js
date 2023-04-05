@@ -1,7 +1,11 @@
-const { send } = require("./src/services/whatsapp");
+require('dotenv').config();
 
-async function toSend() {
-  await send("555511111111", "Hello World ✌🏻");
-}
+const { buildServer } = require('./src/server');
 
-toSend();
+const PORT = process.env.PORT || 3001;
+
+(async () => {
+  const server = await buildServer();
+
+  server.listen(PORT);
+})();

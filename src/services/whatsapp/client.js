@@ -1,90 +1,74 @@
-const qrcode = require('qrcode-terminal');
 const { Client, LocalAuth } = require('whatsapp-web.js');
+const qrcode = require('qrcode-terminal');
 
-const MESSAGE_DEFAULT = {
-  ping: 'pong',
-  test: 'resposta automática utilizando whatsApp-web.js',
-};
-
-const MESSAGE_ACK = {
-  ERROR: -1,
-  VALID: 0,
-};
-
-const TIME_HELPER = {
-  TEN_SECONDS: 10000,
-  HUNDRED_MILISEC: 100,
-};
+function parseNumber(number) {
+  return `${number}`.replace('+', '') + '@c.us';
+}
 
 /**
- *
+ * @typedef {{
+ * _events: object
+ * _eventsCount: number
+ * _maxListeners?: number
+ * options: OptionsClient
+ * authStrategy: object
+ * }} WhatsAppClient
+ */
+/**
+ * @typedef {{
+ * authStrategy: object
+ * puppeteer: object
+ * authTimeoutMs: number
+ * qrMaxRetries: number
+ * takeoverOnConflict: boolean
+ * takeoverTimeoutMs: number
+ * userAgent: string
+ * ffmpegPath: string
+ * bypassCSP: boolean
+ * }} OptionsClient
+ */
+
+/**
+ * Constrói um cliente WhatsApp e monitora os eventos para sua configuração
+ * @param {string} clientId
  * @returns {Promise<WhatsAppClient>}
  */
-async function buildClient() {
-  const messages = new Map();
-
+async function buildClient(clientId) {
   const client = new Client({
     authStrategy: new LocalAuth({
-      clientId: 'client-one',
+      clientId,
     }),
     puppeteer: {
       headless: true,
       args: ['--no-sandbox', '--disable-setuid-sandbox'],
     },
   })
-    .on('authenticated', () => {
-      console.log("You're authenticated");
-    })
+
     .on('qr', (qr) => {
       qrcode.generate(qr, { small: true });
     })
+    .on('error', (err) => console.log({ err }))
     .on('ready', () => {
-      console.log('Ready');
-    })
-    .on('message', async (message) => {
-      console.log('Message Received!', {
-        message: message.body,
-      });
-      const reply = MESSAGE_DEFAULT[message.body];
-      if (reply) {
-        message.reply(reply);
-      }
-    })
-    .on('message_ack', async (message, ack) => {
-      messages.set(message.id.id, ack);
+      console.log('ready'); // TODO: adicionar o logger
     });
 
   await client.initialize();
-
   return {
-    async sendMessage(receiverId, body) {
-      const message = await client.sendMessage(receiverId, body);
-      const messageId = message.id.id;
+    sendMessage: async (phone, message) => {
+      try {
+        const receiverNumber = parseNumber(phone);
 
-      let watchEvent;
-      let timeoutEvent;
+        const { ack } = await client.sendMessage(receiverNumber, message);
 
-      console.log(receiverId, 'Client message obj', message);
-      return new Promise((resolve, reject) => {
-        watchEvent = setInterval(() => {
-          const statusMessage = messages.get(messageId);
-          console.log(receiverId, statusMessage);
-          if (statusMessage > MESSAGE_ACK.VALID) {
-            resolve({ statusMessage });
-          }
-          if (statusMessage === MESSAGE_ACK.ERROR) {
-            reject(new Error('Failed to send message'));
-          }
-        }, TIME_HELPER.HUNDRED_MILISEC);
-
-        timeoutEvent = setTimeout(() => {
-          reject(new Error('WhatsApp message timeout reached'));
-        }, TIME_HELPER.TEN_SECONDS);
-      }).finally(() => {
-        clearInterval(watchEvent);
-        clearTimeout(timeoutEvent);
-        messages.delete(messageId);
-      });
+        return {
+          statusText: ack,
+        };
+      } catch ({ message }) {
+        return {
+          statusText: -1,
+          error: message,
+        };
+      }
     },
   };
 }
