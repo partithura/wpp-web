@@ -54,7 +54,7 @@ async function buildServer(clientId = 'client-one') {
      */
     listen: (port) => {
       app.listen(port);
-      console.log(`Server running at ${HOST}/`);
+      console.log(`Server running at ${HOST}/, but in port ${port}!`);
     },
   };
 }

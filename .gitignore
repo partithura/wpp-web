@@ -67,4 +67,4 @@ dist/
 .wwebjs_auth
 
 ##Secret data
-scrips/*.json
+db.json
