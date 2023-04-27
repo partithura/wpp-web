@@ -65,3 +65,6 @@ dist/
 
 ##auth files
 .wwebjs_auth
+
+##Secret data
+scrips/*.json
