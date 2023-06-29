@@ -30,7 +30,7 @@ async function buildServer(clientId = 'client-one') {
 
             const { phonenumber = null, message = null } = decoded?.payload;
 
-            if (!phonenumber || !message) {
+            if (!message) {
               return constructResponse(
                 response,
                 errorMessage('Payload not found')
@@ -54,7 +54,7 @@ async function buildServer(clientId = 'client-one') {
      */
     listen: (port) => {
       app.listen(port);
-      console.log(`Server running at ${HOST}/, but in port ${port}!`);
+      console.log(`Server running in port ${port}!`);
     },
   };
 }

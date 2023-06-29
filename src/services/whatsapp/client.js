@@ -1,7 +1,14 @@
 const { Client, LocalAuth } = require('whatsapp-web.js');
 const qrcode = require('qrcode-terminal');
 
+const { catchMsg } = require('../../util');
+const { getChatIdByName } = require('./find');
+const GROUP_TO_SEND = process.env.GROUP_TO_SEND || 'Partithura - monitor 💻';
+
 function parseNumber(number) {
+  if (!number) {
+    return null;
+  }
   return `${number}`.replace('+', '') + '@c.us';
 }
 
@@ -34,6 +41,7 @@ function parseNumber(number) {
  * @returns {Promise<WhatsAppClient>}
  */
 async function buildClient(clientId) {
+  let chatId = '';
   const client = new Client({
     authStrategy: new LocalAuth({
       clientId,
@@ -48,17 +56,20 @@ async function buildClient(clientId) {
       qrcode.generate(qr, { small: true });
     })
     .on('error', (err) => console.log({ err }))
-    .on('ready', () => {
-      console.log('ready'); // TODO: adicionar o logger
+    .on('message', catchMsg)
+    .on('ready', async () => {
+      // console.log('ready'); // TODO: adicionar o logger
+
+      chatId = getChatIdByName(await client.getChats(), GROUP_TO_SEND);
     });
 
   await client.initialize();
   return {
     sendMessage: async (phone, message) => {
       try {
-        const receiverNumber = parseNumber(phone);
+        const receiver = parseNumber(phone) || chatId;
 
-        const { ack } = await client.sendMessage(receiverNumber, message);
+        const { ack } = await client.sendMessage(receiver, message);
 
         return {
           statusText: ack,
