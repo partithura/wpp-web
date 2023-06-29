@@ -5,6 +5,9 @@ const { URL } = require('url');
 
 const { SECRET, HOST, FILENAME } = require('../src/server/config');
 const { db } = require(`../${FILENAME}`); // { "db": [ { "name": "José", "number": 555599999999  }, ... ] }
+const { messages } = require('./messages');
+
+const parsedUrl = new URL(HOST);
 
 function getFirstAndPutItInLastPosition() {
   const first = db.shift();
@@ -20,17 +23,19 @@ function persistChanges() {
 
 function getMessageAndPhoneNumber() {
   const { name, number: phonenumber } = getFirstAndPutItInLastPosition();
+  const random = Math.random();
+  const index = Math.floor(random * messages(2).length);
+
   return {
-    message: `🎉 Parabéns, *${name}*! Tu fostes premiado a fazer o mate hoje!`,
+    message: messages(name)[index],
     phonenumber,
   };
 }
 
 function constructToken() {
-  return sign(getMessageAndPhoneNumber(), SECRET);
+  const payload = getMessageAndPhoneNumber();
+  return sign(payload, SECRET);
 }
-
-const parsedUrl = new URL(HOST);
 
 const req = request(
   {

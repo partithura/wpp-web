@@ -2,7 +2,7 @@ const { verify } = require('jsonwebtoken');
 const { createServer } = require('http');
 
 const { validateRequest, constructResponse, errorMessage } = require('../util');
-const { SECRET, HOST, HTTP_STATUS } = require('./config');
+const { SECRET, HTTP_STATUS } = require('./config');
 const { buildClient } = require('../services/whatsapp');
 
 async function buildServer(clientId = 'client-one') {
