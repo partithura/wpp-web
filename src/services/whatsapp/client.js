@@ -2,8 +2,9 @@ const { Client, LocalAuth } = require('whatsapp-web.js');
 const qrcode = require('qrcode-terminal');
 
 const { catchMsg } = require('../../util');
+const { getMessage } = require('../../util/message');
 const { getChatIdByName } = require('./find');
-const GROUP_TO_SEND = process.env.GROUP_TO_SEND || 'Partithura - monitor 💻';
+const GROUP_TO_SEND = process.env.GROUP_TO_SEND;
 
 function parseNumber(number) {
   if (!number) {
@@ -65,16 +66,23 @@ async function buildClient(clientId) {
 
   await client.initialize();
   return {
-    sendMessage: async (phone, message) => {
+    sendMessage: async (phone, message, origin) => {
       try {
         const receiver = parseNumber(phone) || chatId;
+        const messageToSend = await getMessage(origin, message);
+        if (messageToSend) {
+          const { ack } = await client.sendMessage(receiver, messageToSend);
 
-        const { ack } = await client.sendMessage(receiver, message);
-
+          return {
+            statusText: ack,
+          };
+        }
         return {
-          statusText: ack,
+          statusText: 5,
+          message: 'Message saved successfully',
         };
       } catch ({ message }) {
+        console.log({ errorMessage: message });
         return {
           statusText: -1,
           error: message,

@@ -28,7 +28,11 @@ async function buildServer(clientId = 'client-one') {
               return constructResponse(response, errorMessage('Invalid token'));
             }
 
-            const { phonenumber = null, message = null } = decoded?.payload;
+            const {
+              phonenumber = null,
+              message = null,
+              origin = null,
+            } = decoded?.payload;
 
             if (!message) {
               return constructResponse(
@@ -39,7 +43,7 @@ async function buildServer(clientId = 'client-one') {
 
             return constructResponse(
               response,
-              await sendMessage(phonenumber, message)
+              await sendMessage(phonenumber, message, origin)
             );
           }
         );
