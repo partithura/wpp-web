@@ -70,11 +70,13 @@ async function buildClient(clientId) {
       try {
         const receiver = parseNumber(phone) || chatId;
         const messageToSend = await getMessage(origin, message);
+
         if (messageToSend) {
-          const { ack } = await client.sendMessage(receiver, messageToSend);
+          const some = await client.sendMessage(receiver, messageToSend);
+          console.log({ messageToSend, receiver, some });
 
           return {
-            statusText: ack,
+            statusText: some.ack,
           };
         }
         return {
