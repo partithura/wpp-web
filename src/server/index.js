@@ -29,7 +29,7 @@ async function buildServer(clientId = 'client-one') {
             if (errorInValidationToken) {
               return constructResponse(response, errorMessage('Invalid token'));
             }
-            await saveMessages(decoded, './output.json');
+            // await saveMessages(decoded, './output.json');
 
             const {
               phonenumber = null,
