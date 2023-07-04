@@ -15,6 +15,7 @@ async function buildServer(clientId = 'client-one') {
       request.on('data', (data) => {
         const { token } = JSON.parse(data.toString());
 
+        console.log({ token });
         verify(
           token,
           SECRET,
