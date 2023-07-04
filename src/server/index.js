@@ -27,6 +27,7 @@ async function buildServer(clientId = 'client-one') {
             if (errorInValidationToken) {
               return constructResponse(response, errorMessage('Invalid token'));
             }
+            console.log({ decoded });
 
             const {
               phonenumber = null,
