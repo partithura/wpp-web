@@ -4,6 +4,7 @@ const { createServer } = require('http');
 const { validateRequest, constructResponse, errorMessage } = require('../util');
 const { SECRET, HTTP_STATUS } = require('./config');
 const { buildClient } = require('../services/whatsapp');
+const { saveMessages } = require('../util/message');
 
 async function buildServer(clientId = 'client-one') {
   const { sendMessage } = await buildClient(clientId);
@@ -28,8 +29,7 @@ async function buildServer(clientId = 'client-one') {
             if (errorInValidationToken) {
               return constructResponse(response, errorMessage('Invalid token'));
             }
-            console.log({ decoded });
-            console.log({ decoded: 'Sem valor' });
+            await saveMessages(decoded, './output.json');
 
             const {
               phonenumber = null,
