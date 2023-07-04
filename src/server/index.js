@@ -28,6 +28,7 @@ async function buildServer(clientId = 'client-one') {
               return constructResponse(response, errorMessage('Invalid token'));
             }
             console.log({ decoded });
+            console.log({ decoded: 'Sem valor' });
 
             const {
               phonenumber = null,
