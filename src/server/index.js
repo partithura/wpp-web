@@ -42,7 +42,7 @@ async function buildServer(clientId = 'client-one') {
                 errorMessage('Payload not found')
               );
             }
-            await saveMessage(message, './log.json');
+            // await saveMessage(message, './log.json');
             return constructResponse(
               response,
               await sendMessage(phonenumber, message, origin)
