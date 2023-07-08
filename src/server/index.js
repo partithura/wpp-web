@@ -7,15 +7,11 @@ const { buildClient } = require('../services/whatsapp');
 
 async function buildServer(clientId = 'client-one') {
   const { sendMessage } = await buildClient(clientId);
-
   const app = createServer((request, response) => {
     validateRequest(request, response);
-
     if (response.statusCode === HTTP_STATUS.OK) {
       request.on('data', (data) => {
         const { token } = JSON.parse(data.toString());
-
-        console.log({ token });
         verify(
           token,
           SECRET,
@@ -24,24 +20,20 @@ async function buildServer(clientId = 'client-one') {
             response.writeHead(HTTP_STATUS.OK, {
               'Content-Type': 'application/json',
             });
-
             if (errorInValidationToken) {
               return constructResponse(response, errorMessage('Invalid token'));
             }
-
             const {
               phonenumber = null,
               message = null,
               origin = null,
             } = decoded?.payload;
-
             if (!message) {
               return constructResponse(
                 response,
                 errorMessage('Payload not found')
               );
             }
-
             return constructResponse(
               response,
               await sendMessage(phonenumber, message, origin)
