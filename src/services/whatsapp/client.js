@@ -73,7 +73,6 @@ async function buildClient(clientId) {
 
         if (messageToSend) {
           const some = await client.sendMessage(receiver, messageToSend);
-          console.log({ messageToSend, receiver, some });
 
           return {
             statusText: some.ack,

@@ -4,7 +4,6 @@ const { createServer } = require('http');
 const { validateRequest, constructResponse, errorMessage } = require('../util');
 const { SECRET, HTTP_STATUS } = require('./config');
 const { buildClient } = require('../services/whatsapp');
-const { saveMessage } = require('../util/message');
 
 async function buildServer(clientId = 'client-one') {
   const { sendMessage } = await buildClient(clientId);
@@ -42,7 +41,7 @@ async function buildServer(clientId = 'client-one') {
                 errorMessage('Payload not found')
               );
             }
-            // await saveMessage(message, './log.json');
+
             return constructResponse(
               response,
               await sendMessage(phonenumber, message, origin)
