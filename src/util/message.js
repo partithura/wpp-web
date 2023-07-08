@@ -57,7 +57,7 @@ async function saveMessage(message, path) {
 async function getMessage(origin, message) {
   if (SERVICES_TO_MUTE.includes(origin)) {
     await saveMessage(message, getFilePath('log'));
-    if (!isSilentHour()) {
+    if (isSilentHour()) {
       return await saveMessage(message);
     }
     return await getLateMessages(message);
