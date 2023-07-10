@@ -1,7 +1,7 @@
 const { DateTime } = require('luxon');
 const { readFile, writeFile } = require('fs/promises');
 
-const FILENAME = 'messages';
+const FILENAME = 'messages.json';
 const DATE_FORMAT = "T' 'dd/MM/yy";
 const NO_MESSAGES = [];
 const HOUR_NOTIFY = {
@@ -15,9 +15,8 @@ function isSilentHour() {
   return hour <= HOUR_NOTIFY.MIN && hour >= HOUR_NOTIFY.MAX;
 }
 
-function getFilePath(name) {
-  const fileName = name || FILENAME;
-  return `${__dirname}/${fileName}.json`;
+function getFilePath() {
+  return `${__dirname}/${FILENAME}`;
 }
 
 function isEmpty(arr) {
@@ -39,24 +38,22 @@ async function getLateMessages(message) {
   return message;
 }
 
-async function saveMessages(messages, path = getFilePath()) {
-  await writeFile(path, JSON.stringify({ messages }));
+async function saveMessages(messages) {
+  return await writeFile(getFilePath(), JSON.stringify({ messages }));
 }
 
 function setLateMessage(message) {
   return `${message} às ${DateTime.now().toFormat(DATE_FORMAT)}`;
 }
 
-async function saveMessage(message, path) {
-  const local = path || getFilePath();
-  const { messages } = require(local);
+async function saveMessage(message) {
+  const { messages } = require('./messages.json');
   messages.push(setLateMessage(message));
-  await saveMessages(messages, path);
+  await saveMessages(messages);
 }
 
 async function getMessage(origin, message) {
   if (SERVICES_TO_MUTE.includes(origin)) {
-    await saveMessage(message, getFilePath('log'));
     if (isSilentHour()) {
       return await saveMessage(message);
     }
@@ -65,4 +62,4 @@ async function getMessage(origin, message) {
   return message;
 }
 
-module.exports = { getMessage, saveMessages, saveMessage };
+module.exports = { getMessage };
