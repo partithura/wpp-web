@@ -11,7 +11,7 @@ const HOUR_NOTIFY = {
 const SERVICES_TO_MUTE = ['datasync'];
 
 function isSilentHour() {
-  const hour = DateTime.now().get('hour');
+  const hour = DateTime.now().setZone('America/Sao_Paulo').get('hour');
   return hour <= HOUR_NOTIFY.MIN && hour >= HOUR_NOTIFY.MAX;
 }
 
