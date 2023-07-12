@@ -11,8 +11,6 @@ const messages = (name) => [
   name === 'Bruce'
     ? `se o mate não tá na tua mochila, faz lá pra nós`
     : `${name}, vê se o mate não tá na mohila do Bruce`,
-  `O Homem sereia e a mechilhãozinha, te pediram para fazer o mate`,
-  `Quer fazer o mate? não tem pq responder. Mas na dúvida, fala com o Emerson`,
 ];
 
 module.exports = { messages };
