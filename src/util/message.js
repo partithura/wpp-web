@@ -5,15 +5,16 @@ const FILENAME = 'messages.json';
 const DATE_FORMAT = "T' 'dd/MM/yy";
 const NO_MESSAGES = [];
 const HOUR_NOTIFY = {
-  MIN: 6,
-  MAX: 22,
+  MINIMUM: 6,
+  MAXIMUM: 22,
 };
 const SERVICES_TO_MUTE = ['datasync'];
 
 function isSilentHour() {
   const hour = DateTime.now().setZone('America/Sao_Paulo').get('hour');
-  return hour <= HOUR_NOTIFY.MIN && hour > HOUR_NOTIFY.MAX;
+  return hour <= HOUR_NOTIFY.MINIMUM || hour >= HOUR_NOTIFY.MAXIMUM;
 }
+console.log(isSilentHour());
 
 function getFilePath() {
   return `${__dirname}/${FILENAME}`;
