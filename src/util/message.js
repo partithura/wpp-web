@@ -53,12 +53,12 @@ async function saveMessage(message) {
 }
 
 async function getMessage(origin, message) {
-  if (SERVICES_TO_MUTE.includes(origin)) {
-    if (isSilentHour()) {
-      return await saveMessage(message);
-    }
-    return await getLateMessages(message);
-  }
+  // if (SERVICES_TO_MUTE.includes(origin)) {
+  //   if (isSilentHour()) {
+  //     return await saveMessage(message);
+  //   }
+  //   return await getLateMessages(message);
+  // }
   return message;
 }
 
