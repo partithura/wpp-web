@@ -1,10 +1,11 @@
 const { Client, LocalAuth } = require('whatsapp-web.js');
-const qrcode = require('qrcode-terminal');
+const { generate } = require('qrcode-terminal');
 
 const { catchMsg } = require('../../util');
 const { getMessage } = require('../../util/message');
-const { getChatIdByName } = require('./find');
+const { getChatIdByName, getChats } = require('./find');
 const GROUP_TO_SEND = process.env.GROUP_TO_SEND;
+const GROUP_TO_SEND_ERROR = process.env.GROUP_TO_SEND_ERROR;
 
 function parseNumber(number) {
   if (!number) {
@@ -43,6 +44,7 @@ function parseNumber(number) {
  */
 async function buildClient(clientId) {
   let chatId = '';
+  let chatIdToSendError = '';
   const client = new Client({
     authStrategy: new LocalAuth({
       clientId,
@@ -52,16 +54,22 @@ async function buildClient(clientId) {
       args: ['--no-sandbox', '--disable-setuid-sandbox'],
     },
   })
-
     .on('qr', (qr) => {
-      qrcode.generate(qr, { small: true });
+      console.log({ qr });
+      generate(qr, { small: true });
     })
     .on('error', (err) => console.log({ err }))
     .on('message', catchMsg)
     .on('ready', async () => {
-      // console.log('ready'); // TODO: adicionar o logger
+      console.log('ready'); // TODO: adicionar o logger
 
-      chatId = getChatIdByName(await client.getChats(), GROUP_TO_SEND);
+      if (GROUP_TO_SEND)
+        chatId = getChatIdByName(await client.getChats(), GROUP_TO_SEND);
+      if (GROUP_TO_SEND_ERROR)
+        chatIdToSendError = getChatIdByName(
+          await getChats(client),
+          GROUP_TO_SEND_ERROR
+        );
     });
 
   await client.initialize();
@@ -69,19 +77,25 @@ async function buildClient(clientId) {
     sendMessage: async (phone, message, origin) => {
       try {
         const receiver = parseNumber(phone) || chatId;
-        const messageToSend = await getMessage(origin, message);
+        const messageToSend = message;
+        console.log({ receiver, message });
 
         if (messageToSend) {
+          const errorMarkers = ['❌', '⚠️'];
+          if (errorMarkers.includes(messageToSend[0])) {
+            const some = await client.sendMessage(
+              chatIdToSendError,
+              messageToSend
+            );
+            // console.log(some);
+          }
           const some = await client.sendMessage(receiver, messageToSend);
+          // console.log(some);
 
           return {
             statusText: some.ack,
           };
         }
-        return {
-          statusText: 5,
-          message: 'Message saved successfully',
-        };
       } catch ({ message }) {
         console.log({ errorMessage: message });
         return {
