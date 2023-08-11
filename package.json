@@ -1,6 +1,6 @@
 {
   "name": "wpp-web-api",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Interface to send notifications by WhatsApp",
   "repository": "https://github.com/partithura/wpp-web",
   "scripts": {
