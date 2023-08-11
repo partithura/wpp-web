@@ -78,22 +78,19 @@ async function buildClient(clientId) {
       try {
         const receiver = parseNumber(phone) || chatId;
         const messageToSend = message;
-        console.log({ receiver, message });
 
         if (messageToSend) {
           const errorMarkers = ['❌', '⚠️'];
           if (errorMarkers.includes(messageToSend[0])) {
-            const some = await client.sendMessage(
+            await client.sendMessage(
               chatIdToSendError,
               messageToSend
             );
-            // console.log(some);
           }
-          const some = await client.sendMessage(receiver, messageToSend);
-          // console.log(some);
+          const { ack } = await client.sendMessage(receiver, messageToSend);
 
           return {
-            statusText: some.ack,
+            statusText: ack,
           };
         }
       } catch ({ message }) {
