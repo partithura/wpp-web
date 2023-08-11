@@ -1,5 +1,5 @@
 const { Client, LocalAuth } = require('whatsapp-web.js');
-const { generate } = require('qrcode-terminal');
+const qrcode = require('qrcode-terminal');
 
 const { catchMsg } = require('../../util');
 const { getMessage } = require('../../util/message');
@@ -56,7 +56,7 @@ async function buildClient(clientId) {
   })
     .on('qr', (qr) => {
       console.log({ qr });
-      generate(qr, { small: true });
+      qrcode.generate(qr, { small: true });
     })
     .on('error', (err) => console.log({ err }))
     .on('message', catchMsg)
