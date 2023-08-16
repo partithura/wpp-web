@@ -3,4 +3,8 @@ function getChatIdByName(chats, chatName) {
   return chat.id._serialized;
 }
 
-module.exports = { getChatIdByName };
+async function getChats(client) {
+  return await client.getChats() || []
+}
+
+module.exports = { getChatIdByName, getChats };

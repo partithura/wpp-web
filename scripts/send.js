@@ -10,7 +10,6 @@ const parsedUrl = new URL(HOST);
 function getMessage() {
   return {
     message: 'Hoje de noite estamos falando sobre a API',
-    phonenumber: `+555596982093`,
   };
 }
 
@@ -37,7 +36,8 @@ const req = request(
     });
   }
 );
-req.write(JSON.stringify({ token: constructToken() }));
+const payload = JSON.stringify({ token: constructToken() })
+req.write(payload);
 
 req.on('error', (error) => {
   console.error(error);

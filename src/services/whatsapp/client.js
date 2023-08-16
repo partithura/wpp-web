@@ -62,12 +62,12 @@ async function buildClient(clientId) {
     .on('message', catchMsg)
     .on('ready', async () => {
       console.log('ready'); // TODO: adicionar o logger
+      const chats = await getChats(client)
 
       if (GROUP_TO_SEND)
-        chatId = getChatIdByName(await client.getChats(), GROUP_TO_SEND);
+        chatId = getChatIdByName(chats, GROUP_TO_SEND);
       if (GROUP_TO_SEND_ERROR)
-        chatIdToSendError = getChatIdByName(
-          await getChats(client),
+        chatIdToSendError = getChatIdByName(chats,
           GROUP_TO_SEND_ERROR
         );
     });
