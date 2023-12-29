@@ -2,7 +2,6 @@ const { Client, LocalAuth } = require('whatsapp-web.js');
 const qrcode = require('qrcode-terminal');
 
 const { catchMsg } = require('../../util');
-const { getMessage } = require('../../util/message');
 const { getChatIdByName, getChats } = require('./find');
 const GROUP_TO_SEND = process.env.GROUP_TO_SEND;
 const GROUP_TO_SEND_ERROR = process.env.GROUP_TO_SEND_ERROR;
