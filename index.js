@@ -2,7 +2,7 @@ require('dotenv').config();
 
 const { buildServer } = require('./src/server');
 
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT;
 
 (async () => {
   const server = await buildServer();
