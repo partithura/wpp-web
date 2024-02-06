@@ -3,6 +3,9 @@
   "version": "1.0.1",
   "description": "Interface to send notifications by WhatsApp",
   "repository": "https://github.com/partithura/wpp-web",
+  "engines": {
+    "node": ">18.0.0 <19.0.0"
+  },
   "scripts": {
     "dev": "nodemon index.js",
     "start": "node index.js",
