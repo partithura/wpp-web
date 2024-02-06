@@ -5,8 +5,11 @@ const { validateRequest, constructResponse, errorMessage } = require('../util');
 const { SECRET, HTTP_STATUS } = require('./config');
 const { buildClient } = require('../services/whatsapp');
 
-async function buildServer(clientId = 'client-one') {
-  const { sendMessage } = await buildClient(clientId);
+
+
+async function buildServer() {
+  const { name } = require('../../package.json')
+  const { sendMessage } = await buildClient(name);
   const app = createServer((request, response) => {
     validateRequest(request, response);
     if (response.statusCode === HTTP_STATUS.OK) {
