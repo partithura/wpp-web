@@ -2,7 +2,6 @@ const { Client, LocalAuth } = require('whatsapp-web.js');
 const qrcode = require('qrcode-terminal');
 
 const { catchMsg } = require('../../util');
-const { getMessage } = require('../../util/message');
 const { getChatIdByName, getChats } = require('./find');
 const GROUP_TO_SEND = process.env.GROUP_TO_SEND;
 const GROUP_TO_SEND_ERROR = process.env.GROUP_TO_SEND_ERROR;
@@ -55,21 +54,25 @@ async function buildClient(clientId) {
     },
   })
     .on('qr', (qr) => {
-      console.log({ qr });
       qrcode.generate(qr, { small: true });
     })
+    .on('auth_failure', console.log)
     .on('error', (err) => console.log({ err }))
     .on('message', catchMsg)
     .on('ready', async () => {
-      console.log('ready'); // TODO: adicionar o logger
       const chats = await getChats(client)
+      const content = `🤖 Bot WhatsApp Online! ✅\nCliente:*${clientId}*`
+      console.log({ content })
 
-      if (GROUP_TO_SEND)
+      if (GROUP_TO_SEND){
         chatId = getChatIdByName(chats, GROUP_TO_SEND);
-      if (GROUP_TO_SEND_ERROR)
+        client.sendMessage(chatId, content);
+      }
+      if (GROUP_TO_SEND_ERROR){
         chatIdToSendError = getChatIdByName(chats,
-          GROUP_TO_SEND_ERROR
+        GROUP_TO_SEND_ERROR
         );
+      }
     });
 
   await client.initialize();
